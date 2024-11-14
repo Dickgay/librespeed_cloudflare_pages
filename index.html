@@ -10,23 +10,31 @@
             return document.getElementById(i);
         }
 
-        // Test servers configuration
-        var SPEEDTEST_SERVERS = [];
+        // 配置测速服务器（如无服务器，留空）
+        var SPEEDTEST_SERVERS = [
+            {
+                name: "Example Server",
+                server: "https://example.com/speedtest/", // 替换为实际服务器地址
+                dlURL: "garbage.php",
+                ulURL: "empty.php",
+                pingURL: "empty.php",
+                getIpURL: "getIP.php"
+            }
+        ];
 
-        // Initialize Speedtest
+        // 初始化测速对象
         var s = new Speedtest();
-        s.setParameter("telemetry_level", "basic"); // Enable basic telemetry
+        s.setParameter("telemetry_level", "basic"); // 启用基础遥测功能
 
-        // Server selection and UI initialization
         function initServers() {
             if (SPEEDTEST_SERVERS.length === 0) {
-                // Standalone installation (no servers)
+                // 如果没有测速服务器，则跳过服务器选择
                 I("loading").className = "hidden";
                 I("serverArea").style.display = "none";
                 I("testWrapper").className = "visible";
                 initUI();
             } else {
-                // With multiple servers
+                // 如果有测速服务器，选择一个
                 s.addTestPoints(SPEEDTEST_SERVERS);
                 s.selectServer(function (server) {
                     if (server != null) {
@@ -39,6 +47,8 @@
                 });
             }
         }
+
+        var uiData = null;
 
         function startStop() {
             if (s.getState() == 3) {
@@ -60,8 +70,6 @@
                 s.start();
             }
         }
-
-        var uiData = null;
 
         function updateUI(forced) {
             if (!forced && s.getState() != 3) return;
