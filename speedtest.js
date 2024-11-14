@@ -14,6 +14,8 @@
    To initialize the test, create a new Speedtest object:
     var s=new Speedtest();
    Now you can think of this as a finite state machine. These are the states (use getState() to see them):
+   - 0: here you can change the speed test settings (such as test duration) with the setParameter("parameter",value) method. From here you can either start the test using start() (goes to state 3) or you can add multiple test points using addTestPoint(server) or addTestPoints(serverList) (goes to state 1). Additionally, this is the perfect moment to set up callbacks for the onupdate(data) and onend(aborted) events.
+   - 1: here you can add test points. You only need to do this if you want to use multiple test points.
         A server is defined as an object like this:
         {
             name: "User friendly name",
@@ -21,7 +23,7 @@
             dlURL:"garbage.php"    <----- path to garbage.php or its replacement on the server
             ulURL:"empty.php"    <----- path to empty.php or its replacement on the server
             pingURL:"empty.php"    <----- path to empty.php or its replacement on the server. This is used to ping the server by this selector
-            getIpURL:null    <----- path to getIP.php or its replacement on the server
+            getIpURL:"getIP.php"    <----- path to getIP.php or its replacement on the server
         }
         While in state 1, you can only add test points, you cannot change the test settings. When you're done, use selectServer(callback) to select the test point with the lowest ping. This is asynchronous, when it's done, it will call your callback function and move to state 2. Calling setSelectedServer(server) will manually select a server and move to state 2.
     - 2: test point selected, ready to start the test. Use start() to begin, this will move to state 3
@@ -42,6 +44,8 @@
  */
 
 function Speedtest() {
+  this._serverList = []; //when using multiple points of test, this is a list of test points
+  this._selectedServer = null; //when using multiple points of test, this is the selected server
   this._settings = {}; //settings for the speed test worker
   this._state = 0; //0=adding settings, 1=adding servers, 2=server selection done, 3=test running, 4=done
   console.log(
@@ -99,6 +103,7 @@ Speedtest.prototype = {
     }
   },
   /**
+   * Add a test point (multiple points of test)
    * server: the server to be added as an object. Must contain the following elements:
    *  {
    *       name: "User friendly name",
@@ -106,7 +111,7 @@ Speedtest.prototype = {
    *       dlURL:"garbage.php"   path to garbage.php or its replacement on the server
    *       ulURL:"empty.php"   path to empty.php or its replacement on the server
    *       pingURL:"empty.php"   path to empty.php or its replacement on the server. This is used to ping the server by this selector
-   *       getIpURL:null   path to getIP.php or its replacement on the server
+   *       getIpURL:"getIP.php"   path to getIP.php or its replacement on the server
    *   }
    */
   addTestPoint: function(server) {
@@ -123,6 +128,7 @@ Speedtest.prototype = {
     for (var i = 0; i < list.length; i++) this.addTestPoint(list[i]);
   },
   /**
+   * Load a JSON server list from URL (multiple points of test)
    * url: the url where the server list can be fetched. Must be an array with objects containing the following elements:
    *  {
    *       "name": "User friendly name",
@@ -156,6 +162,7 @@ Speedtest.prototype = {
     xhr.send();
   },
   /**
+   * Returns the selected server (multiple points of test)
    */
   getSelectedServer: function() {
     if (this._state < 2 || this._selectedServer == null)
@@ -163,6 +170,7 @@ Speedtest.prototype = {
     return this._selectedServer;
   },
   /**
+   * Manually selects one of the test points (multiple points of test)
    */
   setSelectedServer: function(server) {
     this._checkServerDefinition(server);
@@ -172,6 +180,7 @@ Speedtest.prototype = {
     this._state = 2;
   },
   /**
+   * Automatically selects a server from the list of added test points. The server with the lowest ping will be chosen. (multiple points of test)
    * The process is asynchronous and the passed result callback function will be called when it's done, then the test can be started.
    */
   selectServer: function(result) {
@@ -337,6 +346,7 @@ Speedtest.prototype = {
       200
     );
     if (this._state == 1)
+        throw "When using multiple points of test, you must call selectServer before starting the test";
     if (this._state == 2) {
       this._settings.url_dl =
         this._selectedServer.server + this._selectedServer.dlURL;
@@ -344,7 +354,8 @@ Speedtest.prototype = {
         this._selectedServer.server + this._selectedServer.ulURL;
       this._settings.url_ping =
         this._selectedServer.server + this._selectedServer.pingURL;
-      this._settings.url_getIp = null;
+      this._settings.url_getIp =
+        this._selectedServer.server + this._selectedServer.getIpURL;
       if (typeof this._originalExtra !== "undefined") {
         this._settings.telemetry_extra = JSON.stringify({
           server: this._selectedServer.name,
