@@ -1,0 +1,47 @@
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 0;
+}
+
+#testWrapper {
+    margin: 50px auto;
+    width: 300px;
+}
+
+#startStopBtn {
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+#startStopBtn:hover {
+    background-color: #0056b3;
+}
+
+#test {
+    margin-top: 20px;
+}
+
+#dlText, #ulText, #pingText, #jitText {
+    font-size: 2em;
+    font-weight: bold;
+    color: #007bff;
+}
+
+#dlUnit, #ulUnit, #pingUnit, #jitUnit {
+    font-size: 1em;
+    color: #555;
+}
+
+#dlLabel, #ulLabel, #pingLabel, #jitLabel {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 10px;
+}
