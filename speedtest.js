@@ -376,3 +376,17 @@ Speedtest.prototype = {
     if (this._state < 4) this.worker.postMessage("abort");
   }
 };
+
+
+function startStop() {
+    if (running) {
+        // Stop the test if it's running
+        running = false;
+        I('startStopBtn').textContent = "Start";
+    } else {
+        // Start the test
+        running = true;
+        I('startStopBtn').textContent = "Stop";
+        startTest(); // Assuming startTest is the main function to begin the speed test
+    }
+}
