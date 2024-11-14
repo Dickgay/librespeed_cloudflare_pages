@@ -141,9 +141,11 @@ function startStop(){
 		I("startStopBtn").className="running";
 		I("shareArea").style.display="none";
 		I("server").disabled=true;
-		s.onupdate=function(data){
-            uiData=data;
-		};
+                s.onupdate = function(data) {
+                    uiData = data; // 更新测试数据
+                    // 设置固定 IP
+                    I("ip").textContent = "192.168.1.1";
+                };
 		s.onend=function(aborted){
             I("startStopBtn").className="";
             I("server").disabled=false;
