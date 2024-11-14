@@ -48,6 +48,7 @@ function Speedtest() {
   this._selectedServer = null; //when using multiple points of test, this is the selected server
   this._settings = {}; //settings for the speed test worker
   this._state = 0; //0=adding settings, 1=adding servers, 2=server selection done, 3=test running, 4=done
+  console.log(
     "LibreSpeed by Federico Dossena v5.4.1 - https://github.com/librespeed/speedtest"
   );
 }
@@ -376,35 +377,3 @@ Speedtest.prototype = {
     if (this._state < 4) this.worker.postMessage("abort");
   }
 };
-
-
-function startStop() {
-    if (running) {
-        // Stop the test if it's running
-        running = false;
-        I('startStopBtn').textContent = "Start";
-    } else {
-        // Start the test
-        running = true;
-        I('startStopBtn').textContent = "Stop";
-        startTest(); // Assuming startTest is the main function to begin the speed test
-    }
-}
-
-
-
-function startTest() {
-    console.log("Speed test started.");
-    // Simulate a speed test by updating a test status element (if exists)
-    if (I("testStatus")) {
-        I("testStatus").textContent = "Running speed test...";
-    }
-    // Simulate test completion after 3 seconds
-    setTimeout(function () {
-        if (I("testStatus")) {
-            I("testStatus").textContent = "Test completed. Results: Download 100 Mbps, Upload 50 Mbps";
-        }
-        running = false;
-        I('startStopBtn').textContent = "Start";
-    }, 3000);
-}

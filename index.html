@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<style>
-#shareArea, #loading, #message {
-    display: none !important;
-}
-</style>
-
 <link rel="shortcut icon" href="favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
 <meta charset="UTF-8" />
@@ -434,7 +427,7 @@ function initUI(){
 	<p id="message"><span class="loadCircle"></span>Selecting a server...</p>
 </div>
 <div id="testWrapper" class="hidden">
-	<div id="startStopBtn" onclick="startStop()">Start</div><br/>
+	<div id="startStopBtn" onclick="startStop()"></div><br/>
 	<a class="privacy" href="#" onclick="I('privacyPolicy').style.display=''">Privacy</a>
 	<div id="serverArea">
 		Server: <select id="server" onchange="s.setSelectedServer(SPEEDTEST_SERVERS[this.value])"></select>
