@@ -23,7 +23,7 @@
             dlURL:"garbage.php"    <----- path to garbage.php or its replacement on the server
             ulURL:"empty.php"    <----- path to empty.php or its replacement on the server
             pingURL:"empty.php"    <----- path to empty.php or its replacement on the server. This is used to ping the server by this selector
-            getIpURL:"getIP.php"    <----- path to getIP.php or its replacement on the server
+            getIpURL:null    <----- path to getIP.php or its replacement on the server
         }
         While in state 1, you can only add test points, you cannot change the test settings. When you're done, use selectServer(callback) to select the test point with the lowest ping. This is asynchronous, when it's done, it will call your callback function and move to state 2. Calling setSelectedServer(server) will manually select a server and move to state 2.
     - 2: test point selected, ready to start the test. Use start() to begin, this will move to state 3
@@ -111,7 +111,7 @@ Speedtest.prototype = {
    *       dlURL:"garbage.php"   path to garbage.php or its replacement on the server
    *       ulURL:"empty.php"   path to empty.php or its replacement on the server
    *       pingURL:"empty.php"   path to empty.php or its replacement on the server. This is used to ping the server by this selector
-   *       getIpURL:"getIP.php"   path to getIP.php or its replacement on the server
+   *       getIpURL:null   path to getIP.php or its replacement on the server
    *   }
    */
   addTestPoint: function(server) {
