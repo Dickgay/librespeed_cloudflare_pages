@@ -354,8 +354,7 @@ Speedtest.prototype = {
         this._selectedServer.server + this._selectedServer.ulURL;
       this._settings.url_ping =
         this._selectedServer.server + this._selectedServer.pingURL;
-      this._settings.url_getIp =
-        this._selectedServer.server + this._selectedServer.getIpURL;
+      this._settings.url_getIp = null;
       if (typeof this._originalExtra !== "undefined") {
         this._settings.telemetry_extra = JSON.stringify({
           server: this._selectedServer.name,
