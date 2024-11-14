@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="shortcut icon" href="favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
-    <meta charset="UTF-8" />
-    <script type="text/javascript" src="speedtest.js"></script>
-    <script type="text/javascript">
+    <meta charset="UTF-8">
+    <title>LibreSpeed</title>
+    <script src="speedtest.js"></script>
+    <script>
         function I(i) {
             return document.getElementById(i);
         }
 
-        // 配置测速服务器（如无服务器，留空）
+        // 测速服务器配置
         var SPEEDTEST_SERVERS = [
             {
-                name: "Example Server",
-                server: "https://example.com/speedtest/", // 替换为实际服务器地址
+                name: "Demo Server",
+                server: "https://librespeed.example.com/speedtest/",
                 dlURL: "garbage.php",
                 ulURL: "empty.php",
                 pingURL: "empty.php",
@@ -22,22 +21,19 @@
             }
         ];
 
-        // 初始化测速对象
+        // 初始化 Speedtest
         var s = new Speedtest();
-        s.setParameter("telemetry_level", "basic"); // 启用基础遥测功能
+        s.setParameter("telemetry_level", "basic");
 
         function initServers() {
             if (SPEEDTEST_SERVERS.length === 0) {
-                // 如果没有测速服务器，则跳过服务器选择
                 I("loading").className = "hidden";
-                I("serverArea").style.display = "none";
                 I("testWrapper").className = "visible";
                 initUI();
             } else {
-                // 如果有测速服务器，选择一个
                 s.addTestPoints(SPEEDTEST_SERVERS);
-                s.selectServer(function (server) {
-                    if (server != null) {
+                s.selectServer(function(server) {
+                    if (server) {
                         I("loading").className = "hidden";
                         I("testWrapper").className = "visible";
                         initUI();
@@ -48,98 +44,39 @@
             }
         }
 
-        var uiData = null;
-
         function startStop() {
             if (s.getState() == 3) {
                 s.abort();
                 I("startStopBtn").className = "";
-                I("server").disabled = false;
-                initUI();
             } else {
                 I("startStopBtn").className = "running";
-                I("server").disabled = true;
-                s.onupdate = function (data) {
-                    uiData = data;
-                };
-                s.onend = function () {
-                    I("startStopBtn").className = "";
-                    I("server").disabled = false;
-                    updateUI(true);
-                };
                 s.start();
             }
         }
 
-        function updateUI(forced) {
-            if (!forced && s.getState() != 3) return;
-            if (uiData == null) return;
-            I("dlText").textContent = format(uiData.dlStatus);
-            I("ulText").textContent = format(uiData.ulStatus);
-            I("pingText").textContent = format(uiData.pingStatus);
-            I("jitText").textContent = format(uiData.jitterStatus);
-        }
-
-        function format(d) {
-            d = Number(d);
-            return d < 10 ? d.toFixed(2) : d.toFixed(0);
-        }
-
         function initUI() {
-            I("dlText").textContent = "";
-            I("ulText").textContent = "";
-            I("pingText").textContent = "";
-            I("jitText").textContent = "";
+            I("startStopBtn").className = "";
         }
     </script>
-    <style type="text/css">
-        html, body {
-            margin: 0;
-            padding: 0;
+    <style>
+        body {
+            font-family: Arial, sans-serif;
             text-align: center;
             background: #202020;
-            color: #F4F4F4;
-            font-family: "Roboto", sans-serif;
+            color: white;
         }
-
-        h1 {
-            color: #E0E0E0;
-        }
-
-        #startStopBtn {
-            display: inline-block;
-            color: #6060AA;
-            border: 0.15em solid #6060FF;
-            border-radius: 0.3em;
-            width: 8em;
-            height: 3em;
-            line-height: 2.7em;
-            cursor: pointer;
-        }
-
-        #testWrapper {
-            display: none;
-        }
-
-        div.visible {
-            display: block;
+        #loading {
+            margin-top: 50px;
         }
     </style>
-    <title>LibreSpeed</title>
 </head>
 <body onload="initServers()">
     <h1>LibreSpeed</h1>
-    <div id="loading" class="visible">
+    <div id="loading">
         <p id="message">Loading...</p>
     </div>
-    <div id="testWrapper" class="hidden">
-        <div id="startStopBtn" onclick="startStop()">Start</div>
-        <div id="test">
-            <div>Download: <span id="dlText">0.00</span> Mbps</div>
-            <div>Upload: <span id="ulText">0.00</span> Mbps</div>
-            <div>Ping: <span id="pingText">0</span> ms</div>
-            <div>Jitter: <span id="jitText">0</span> ms</div>
-        </div>
+    <div id="testWrapper" style="display:none;">
+        <button id="startStopBtn" onclick="startStop()">Start</button>
     </div>
 </body>
 </html>
